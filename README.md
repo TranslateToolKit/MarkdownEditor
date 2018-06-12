@@ -1,7 +1,7 @@
 # Markdown 编辑器
 MarkdownEditor by Editor.md in NW.js package for desktop usage 
 
-作者 @gengiusq1981(https://github.com/geniusq1981)
+作者 [@gengiusq1981](https://github.com/geniusq1981)
 
 ![](https://github.com/TranslateToolKit/MarkdownEditor/blob/master/readme/screenshot.JPG)
 
@@ -9,12 +9,12 @@ MarkdownEditor by Editor.md in NW.js package for desktop usage
 
 ## 生成 exe 文件
 
-- **下载NW.js** —— https://nwjs.io/    
+- **下载 [NW.js](https://nwjs.io/)**     
    1. 下载相应的Windows版本，解压
    2. 将 MarkdownEditor 文件夹内所有内容打包成压缩文件 MarkdownEditor.zip,复制到 NW.js 的安装目录中
 
 - **打包命令** 
-   1. 通过命令 copy /b nw.exe+MarkdownEditor.zip MarkdownEditor.exe 生成 MarkdownEditor.exe 
+   1. 通过命令 `copy /b nw.exe+MarkdownEditor.zip MarkdownEditor.exe` 生成 MarkdownEditor.exe 
 
 - **生成 exe 工具**
    1. **将依赖的dll文件和Test.exe打包成一个文件**:
