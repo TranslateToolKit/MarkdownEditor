@@ -48,15 +48,20 @@
             </div>
         </div>
         <script src="js/jquery.min.js"></script>
-        <script src="js/editormd.min.js"></script>
+        <script src="js/editormd.js"></script>
         <script type="text/javascript">
 			var testEditor;
 
             $(function() {
                 testEditor = editormd("test-editormd", {
                     width   : "90%",
-                    height  : 640,
+                    height  : "90%",
                     syncScrolling : "single",
+					emoji : true,       // Support Github emoji, Twitter Emoji(Twemoji), fontAwesome, Editor.md logo emojis.                    
+					taskList : true,
+					toolbarIcons : function() {
+             return editormd.toolbarModes["full"]; // full, simple, mini
+             },
                     path    : "lib/"
                 });
                 
