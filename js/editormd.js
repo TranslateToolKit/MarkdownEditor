@@ -58,10 +58,10 @@
         return new editormd.fn.init(id, options);
     };
     
-    editormd.title        = editormd.$name = "Editor.md";
-    editormd.version      = "1.5.0";
+    editormd.title        = editormd.$name = "MarkdownEditor";
+    editormd.version      = "1.0.0";
     editormd.homePage     = "https://pandao.github.io/editor.md/";
-	editormd.suggestionPage = "https://github.com/TranslateToolKit/MarkdownEditor/blob/master/README.md";
+	editormd.suggestionPage = "https://translatetoolkit.github.io/MarkdownEditor/";
     editormd.classPrefix  = "editormd-";
     
     editormd.toolbarModes = {
