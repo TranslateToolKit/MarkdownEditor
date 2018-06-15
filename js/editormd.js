@@ -72,7 +72,7 @@
             "list-ul", "list-ol", "hr", "|",
             "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "emoji", "html-entities", "pagebreak", "|",
             "goto-line", "watch", "preview", "fullscreen", "clear", "search", "|",
-            "help", "info"
+            "help", "info","lint"
         ],
         simple : [
             "undo", "redo", "|", 
@@ -118,6 +118,8 @@
 		indentUnit           : 4,
         lineNumbers          : true,
 		lineWrapping         : true,
+        lint                 : true,
+        lintOnChange         : true,
 		autoCloseBrackets    : true,
 		showTrailingSpace    : true,
 		matchBrackets        : true,
@@ -190,6 +192,7 @@
         toolbarIconsClass    : {
             undo             : "fa-undo",
             redo             : "fa-repeat",
+            lint             : "fa-undo",
             bold             : "fa-bold",
             del              : "fa-strikethrough",
             italic           : "fa-italic",
@@ -234,6 +237,7 @@
             toolbar     : {
                 undo             : "撤销（Ctrl+Z）",
                 redo             : "重做（Ctrl+Y）",
+                lint             : "检查",
                 bold             : "粗体",
                 del              : "删除线",
                 italic           : "斜体",
@@ -343,7 +347,8 @@
             watching   : false,
             loaded     : false,
             preview    : false,
-            fullscreen : false
+            fullscreen : false,
+            lint       : false
         },
         
         /**
@@ -464,6 +469,11 @@
                     editormd.loadCSS(settings.path + "codemirror/addon/dialog/dialog");
                     editormd.loadCSS(settings.path + "codemirror/addon/search/matchesonscrollbar");
                 }
+
+                 if (settings.lint) 
+                {
+                    editormd.loadCSS(settings.path + "codemirror/addon/lint/lint");
+                }
             }
             
             if ((typeof define === "function" && define.amd) || !settings.autoLoadModules)
@@ -547,7 +557,7 @@
                 }
             }; 
 
-            editormd.loadCSS(loadPath + "codemirror/codemirror.min");
+            editormd.loadCSS(loadPath + "codemirror/codemirror");
             
             if (settings.searchReplace && !settings.readOnly)
             {
@@ -555,13 +565,40 @@
                 editormd.loadCSS(loadPath + "codemirror/addon/search/matchesonscrollbar");
             }
             
+              if (settings.lint) 
+                {
+                    editormd.loadCSS(settings.path + "codemirror/addon/lint/lint");
+                }
+
             if (settings.codeFold)
             {
                 editormd.loadCSS(loadPath + "codemirror/addon/fold/foldgutter");            
             }
             
-            editormd.loadScript(loadPath + "codemirror/codemirror.min", function() {
+            if (settings.lint) 
+                {
+                    
+                    editormd.loadScript(loadPath + "codemirror/addon/lint/jshint.min", function() {
+                    editormd.loadScript(loadPath + "codemirror/addon/lint/lint", function() {
+                        editormd.loadScript(loadPath + "codemirror/addon/lint/javascript-lint", function() {
+
+                        });
+                    });
+                });
+                   
+                }
+
+            editormd.loadScript(loadPath + "codemirror/codemirror", function() {
                 editormd.$CodeMirror = CodeMirror;
+
+                editormd.loadScript(loadPath + "codemirror/mode/javascript/javascript",function(){ 
+                   /*editormd.loadScript(loadPath + "codemirror/mode/css/css",function(){ 
+                   });*/
+                   });  
+                   editormd.loadScript(loadPath + "codemirror/mode/markdown/markdown",function(){ 
+                   /*editormd.loadScript(loadPath + "codemirror/mode/css/css",function(){ 
+                   });*/
+                   });       
                 
                 editormd.loadScript(loadPath + "codemirror/modes.min", function() {
                     
@@ -593,6 +630,7 @@
                                 loadFlowChartOrSequenceDiagram();
                             }
                         });
+
                         
                     });
                     
@@ -692,7 +730,7 @@
             }
             
             var codeMirrorConfig = {
-                mode                      : settings.mode,
+                mode                      : "javascript",//"markdown",//settings.mode,
                 theme                     : settings.editorTheme,
                 tabSize                   : settings.tabSize,
                 dragDrop                  : false,
@@ -708,19 +746,22 @@
                                                 }
                                             },
                 foldGutter                : settings.codeFold,
-                gutters                   : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+                gutters                   : ["CodeMirror-linenumbers", "CodeMirror-foldgutter","CodeMirror-lint-markers"],
                 matchBrackets             : settings.matchBrackets,
                 indentWithTabs            : settings.indentWithTabs,
                 styleActiveLine           : settings.styleActiveLine,
                 styleSelectedText         : settings.styleSelectedText,
                 autoCloseBrackets         : settings.autoCloseBrackets,
                 showTrailingSpace         : settings.showTrailingSpace,
+                lint                      : true,
+                lintOnChange              : true,
                 highlightSelectionMatches : ( (!settings.matchWordHighlight) ? false : { showToken: (settings.matchWordHighlight === "onselected") ? false : /\w/ } )
             };
             
             this.codeEditor = this.cm        = editormd.$CodeMirror.fromTextArea(this.markdownTextarea[0], codeMirrorConfig);
             this.codeMirror = this.cmElement = editor.children(".CodeMirror");
             
+
             if (settings.value !== "")
             {
                 this.cm.setValue(settings.value);
@@ -1769,8 +1810,14 @@
                 return this;
             }
             
+
             cm.on("change", function(_cm, changeObj) {
                 
+                console.log("test");
+                console.log(settings.lint);
+                if (settings.lint){
+                    _this.lint();
+                }
                 if (settings.watch)
                 {
                     _this.previewContainer.css("padding", settings.autoHeight ? "20px 20px 50px 40px" : "20px");
@@ -2263,6 +2310,7 @@
             return this.cm.getValue();
         },
         
+
         /**
          * 获取编辑器的源文档
          * Get CodeMirror value
@@ -2594,7 +2642,18 @@
             
             return this;
         },
-        
+        /**
+         * 编辑器全屏显示
+         * 检查Fullscreen show
+         * 
+         * @returns {editormd}         返回editormd的实例对象
+         */
+         lint : function(){
+            console.log(this.cm);
+            var cm = this.cm;
+            cm.performLint();
+         },
+
         /**
          * 编辑器全屏显示
          * Fullscreen show
@@ -2603,7 +2662,7 @@
          */
         
         fullscreen : function() {
-            
+
             var _this            = this;
             var state            = this.state;
             var editor           = this.editor;
@@ -2741,6 +2800,7 @@
          */
         
         search : function(command) {
+
             var settings = this.settings;
             
             if (!settings.searchReplace)
@@ -2812,7 +2872,13 @@
     };
 
     editormd.toolbarHandlers = {
+        lint : function(){
+            console.log("lint");
+            this.cm.performLint();
+        },
+
         undo : function() {
+            console.log("undo");
             this.cm.undo();
         },
         
@@ -3165,6 +3231,7 @@
         },
 
         fullscreen : function() {
+            console.log("fullscreen");
             this.fullscreen();
         },
 
@@ -3173,6 +3240,7 @@
         },
         
         search : function() {
+            console.log("search");
             this.search();
         },
 
