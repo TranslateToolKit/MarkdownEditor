@@ -192,7 +192,7 @@
         toolbarIconsClass    : {
             undo             : "fa-undo",
             redo             : "fa-repeat",
-            lint             : "fa-undo",
+            lint             : "fa-user-times",
             bold             : "fa-bold",
             del              : "fa-strikethrough",
             italic           : "fa-italic",
@@ -577,10 +577,14 @@
             
             if (settings.lint) 
                 {
-                    
+                     editormd.loadScript(loadPath + "codemirror/addon/lint/markdown/markdown-it.min", function() {
+							editormd.loadScript(loadPath + "codemirror/addon/lint/markdown/markdownlint-browser", function() {
+							
+                        });
+                        });
                     editormd.loadScript(loadPath + "codemirror/addon/lint/jshint.min", function() {
                     editormd.loadScript(loadPath + "codemirror/addon/lint/lint", function() {
-                        editormd.loadScript(loadPath + "codemirror/addon/lint/javascript-lint", function() {
+                        editormd.loadScript(loadPath + "codemirror/addon/lint/markdown-lint", function() {
 
                         });
                     });
@@ -595,7 +599,7 @@
                    /*editormd.loadScript(loadPath + "codemirror/mode/css/css",function(){ 
                    });*/
                    });  
-                   editormd.loadScript(loadPath + "codemirror/mode/markdown/markdown",function(){ 
+                   editormd.loadScript(loadPath + "codemirror/mode/gfm/gfm",function(){ 
                    /*editormd.loadScript(loadPath + "codemirror/mode/css/css",function(){ 
                    });*/
                    });       
@@ -730,7 +734,7 @@
             }
             
             var codeMirrorConfig = {
-                mode                      : "javascript",//"markdown",//settings.mode,
+                mode                      : "gfm",//"markdown",//settings.mode,
                 theme                     : settings.editorTheme,
                 tabSize                   : settings.tabSize,
                 dragDrop                  : false,
