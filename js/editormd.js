@@ -237,7 +237,7 @@
             toolbar     : {
                 undo             : "撤销（Ctrl+Z）",
                 redo             : "重做（Ctrl+Y）",
-                lint             : "检查",
+                lint             : "格式检查(掘金计划版)",
                 bold             : "粗体",
                 del              : "删除线",
                 italic           : "斜体",
