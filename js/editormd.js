@@ -66,13 +66,13 @@
     
     editormd.toolbarModes = {
         full : [
-            "undo", "redo", "|", 
+            "open","undo", "redo", "|", 
             "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|", 
             "h1", "h2", "h3", "h4", "h5", "h6", "|", 
             "list-ul", "list-ol", "hr", "|",
             "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "emoji", "html-entities", "pagebreak", "|",
-            "goto-line", "watch", "preview", "fullscreen", "clear", "search", "|",
-            "help", "info","lint"
+            "goto-line", "watch", "preview", "fullscreen", "clear", "search","replace","lint","|",
+            "help", "info"
         ],
         simple : [
             "undo", "redo", "|", 
@@ -178,6 +178,7 @@
         toolbarIcons         : "full",
         toolbarTitles        : {},
         toolbarHandlers      : {
+
             ucwords : function() {
                 return editormd.toolbarHandlers.ucwords;
             },
@@ -186,10 +187,12 @@
             }
         },
         toolbarCustomIcons   : {               // using html tag create toolbar icon, unused default <a> tag.
+            open             : "<label class=\"fa fa-folder-open\" name=\"open\" for=\"fileInput\" style=\"margin-left:3px;padding:5px;\"></label><input type=\"file\" id=\"fileInput\" accept=\"\.md\" style=\"display:none\">",
             lowercase        : "<a href=\"javascript:;\" title=\"Lowercase\" unselectable=\"on\"><i class=\"fa\" name=\"lowercase\" style=\"font-size:24px;margin-top: -10px;\">a</i></a>",
             "ucwords"        : "<a href=\"javascript:;\" title=\"ucwords\" unselectable=\"on\"><i class=\"fa\" name=\"ucwords\" style=\"font-size:20px;margin-top: -3px;\">Aa</i></a>"
         }, 
         toolbarIconsClass    : {
+            open             : "fa-folder-open",
             undo             : "fa-undo",
             redo             : "fa-repeat",
             lint             : "fa-user-times",
@@ -223,6 +226,7 @@
             unwatch          : "fa-eye",
             preview          : "fa-desktop",
             search           : "fa-search",
+            replace          : "fa-search-plus",
             fullscreen       : "fa-arrows-alt",
             clear            : "fa-eraser",
             help             : "fa-question-circle",
@@ -235,6 +239,7 @@
             description : "开源在线Markdown编辑器<br/>Open source online Markdown editor.",
             tocTitle    : "目录",
             toolbar     : {
+                open             : "打开MD文件",
                 undo             : "撤销（Ctrl+Z）",
                 redo             : "重做（Ctrl+Y）",
                 lint             : "格式检查(掘金计划版)",
@@ -272,6 +277,7 @@
                 fullscreen       : "全屏（按ESC还原）",
                 clear            : "清空",
                 search           : "搜索",
+                replace          : "替换",
                 help             : "使用帮助",
                 info             : "关于" + editormd.title
             },
@@ -1292,13 +1298,28 @@
             var classPrefix         = this.classPrefix;           
             var toolbarIcons        = this.toolbarIcons = toolbar.find("." + classPrefix + "menu > li > a");  
             var toolbarIconHandlers = this.getToolbarHandles();  
-                
+            var toolbarOpenFile     = toolbar.find("." + classPrefix + "menu > li > input");    
+            console.log(toolbarIcons);
+            console.log(toolbarOpenFile);
+
+            toolbarOpenFile.bind("change",function(event){
+                console.log("openfile change~");
+                $.proxy(toolbarIconHandlers['open'], _this)(cm);
+
+            });
+
+
             toolbarIcons.bind(editormd.mouseOrTouch("click", "touchend"), function(event) {
 
                 var icon                = $(this).children(".fa");
                 var name                = icon.attr("name");
                 var cursor              = cm.getCursor();
                 var selection           = cm.getSelection();
+
+                console.log(icon);
+                console.log(name);
+                console.log(cursor);
+                console.log(selection);
 
                 if (name === "") {
                     return ;
@@ -1319,7 +1340,7 @@
                 }
                 
                 if (name !== "link" && name !== "reference-link" && name !== "image" && name !== "code-block" && 
-                    name !== "preformatted-text" && name !== "watch" && name !== "preview" && name !== "search" && name !== "fullscreen" && name !== "info") 
+                    name !== "preformatted-text" && name !== "watch" && name !== "preview" && name !== "search" && name !== "replace" && name !== "fullscreen" && name !== "info") 
                 {
                     cm.focus();
                 }
@@ -2794,6 +2815,34 @@
             
             return this;
         },
+
+          /**
+         * 打开文件
+         * Search & replace
+         * 
+         * @param   {String}     command    CodeMirror serach commands, "find, fintNext, fintPrev, clearSearch, replace, replaceAll"
+         * @returns {editormd}              return this
+         */
+
+        openfile : function() {
+            console.log("openfile");
+            var file = document.getElementById("fileInput").files[0];  
+            var reader = new FileReader();  
+            //将文件以文本形式读入页面  
+            reader.readAsText(file); 
+            var that = this; 
+            reader.onload=function(f){  
+            //var result=document.getElementById("result");  
+            //显示文件  
+            console.log(this.result);
+            console.log(that);
+            that.cm.doc.setValue(this.result);
+            //result.innerHTML=this.result;  
+            }  
+            return this;
+           // $(#fileInput).triger('click');
+            //console.log($(#fileInput));
+        },
                 
         /**
          * 搜索替换
@@ -3242,10 +3291,22 @@
         clear : function() {
             this.clear();
         },
+
+        open : function(){
+            console.log("openfile");
+            console.log(this);
+            this.openfile();
+        },
         
         search : function() {
             console.log("search");
             this.search();
+        },
+
+        replace : function() {
+            console.log("replace");
+            console.log(this);
+            this.searchReplace();
         },
 
         help : function() {
