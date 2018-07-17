@@ -584,7 +584,7 @@
             if (settings.lint) 
                 {
                      editormd.loadScript(loadPath + "codemirror/addon/lint/markdown/markdown-it.min", function() {
-							editormd.loadScript(loadPath + "codemirror/addon/lint/markdown/markdownlint-browser", function() {
+							editormd.loadScript(loadPath + "codemirror/addon/lint/markdown/markdownlint-browser.min", function() {
 							
                         });
                         });
