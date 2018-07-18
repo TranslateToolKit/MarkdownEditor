@@ -66,12 +66,12 @@
     
     editormd.toolbarModes = {
         full : [
-            "open","undo", "redo", "|", 
+            "open","save","undo", "redo", "|", 
             "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|", 
             "h1", "h2", "h3", "h4", "h5", "h6", "|", 
             "list-ul", "list-ol", "hr", "|",
             "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "emoji", "html-entities", "pagebreak", "|",
-            "goto-line", "watch", "preview", "fullscreen", "clear", "search","replace","lint","|",
+            "goto-line", "watch", "preview", "fullscreen", "clear", "search","replace","lint","translation","|",
             "help", "info"
         ],
         simple : [
@@ -120,6 +120,7 @@
 		lineWrapping         : true,
         lint                 : true,
         lintOnChange         : true,
+        translation          : true,
 		autoCloseBrackets    : true,
 		showTrailingSpace    : true,
 		matchBrackets        : true,
@@ -187,15 +188,17 @@
             }
         },
         toolbarCustomIcons   : {               // using html tag create toolbar icon, unused default <a> tag.
-            open             : "<label class=\"fa fa-folder-open\" name=\"open\" for=\"fileInput\" style=\"margin-left:3px;padding:5px;\"></label><input type=\"file\" id=\"fileInput\" accept=\"\.md\" style=\"display:none\">",
+            open             : "<a href=\"javascript:;\" title=\"Lowercase\" unselectable=\"on\"><label class=\"fa fa-folder-open\" name=\"open\" for=\"fileInput\" style=\"margin-left:3px;padding:5px;\"></label></a><input type=\"file\" id=\"fileInput\" accept=\"\.md\" style=\"display:none\">",
             lowercase        : "<a href=\"javascript:;\" title=\"Lowercase\" unselectable=\"on\"><i class=\"fa\" name=\"lowercase\" style=\"font-size:24px;margin-top: -10px;\">a</i></a>",
             "ucwords"        : "<a href=\"javascript:;\" title=\"ucwords\" unselectable=\"on\"><i class=\"fa\" name=\"ucwords\" style=\"font-size:20px;margin-top: -3px;\">Aa</i></a>"
         }, 
         toolbarIconsClass    : {
             open             : "fa-folder-open",
+            save             : "fa-save",
             undo             : "fa-undo",
             redo             : "fa-repeat",
             lint             : "fa-user-times",
+            translation      : "fa-globe",
             bold             : "fa-bold",
             del              : "fa-strikethrough",
             italic           : "fa-italic",
@@ -240,9 +243,11 @@
             tocTitle    : "目录",
             toolbar     : {
                 open             : "打开MD文件",
+                save             : "选择保存文件",
                 undo             : "撤销（Ctrl+Z）",
                 redo             : "重做（Ctrl+Y）",
                 lint             : "格式检查(掘金计划版)",
+                translation      : "自动翻译",
                 bold             : "粗体",
                 del              : "删除线",
                 italic           : "斜体",
@@ -580,7 +585,7 @@
             {
                 editormd.loadCSS(loadPath + "codemirror/addon/fold/foldgutter");            
             }
-            
+             
             if (settings.lint) 
                 {
                      editormd.loadScript(loadPath + "codemirror/addon/lint/markdown/markdown-it.min", function() {
@@ -597,7 +602,7 @@
                 });
                    
                 }
-
+           
             editormd.loadScript(loadPath + "codemirror/codemirror", function() {
                 editormd.$CodeMirror = CodeMirror;
 
@@ -613,6 +618,14 @@
                 editormd.loadScript(loadPath + "codemirror/modes.min", function() {
                     
                     editormd.loadScript(loadPath + "codemirror/addons.min", function() {
+                        if (settings.translation){
+                 editormd.loadScript(loadPath + "codemirror/addon/translation/md5.min", function() {
+                            editormd.loadScript(loadPath + "codemirror/addon/translation/tjs.browser", function() {
+                                editormd.loadScript(loadPath + "codemirror/addon/translation/tjs.wrapper", function() {
+                            });
+                       });
+                    });
+            }
                         
                         _this.setCodeMirror();
                         
@@ -1304,10 +1317,10 @@
 
             toolbarOpenFile.bind("change",function(event){
                 console.log("openfile change~");
-                $.proxy(toolbarIconHandlers['open'], _this)(cm);
-
+                console.log(_this);
+                console.log(toolbarOpenFile.attr('data-type'))
+                $.proxy(toolbarIconHandlers['openfile'], _this)(cm);
             });
-
 
             toolbarIcons.bind(editormd.mouseOrTouch("click", "touchend"), function(event) {
 
@@ -1867,7 +1880,7 @@
          */
         
         loadedDisplay : function(recreate) {
-            
+            console.log("loadedDisplay");
             recreate             = recreate || false;
             
             var _this            = this;
@@ -1904,6 +1917,44 @@
             return this;
         },
         
+        /**
+         * loading显示
+         * Display handle of the module queues loaded after.
+         * 
+         * @param   {Boolean}   recreate   是否为重建编辑器
+         * @returns {editormd}             返回editormd的实例对象
+         */
+
+
+        loadingshow : function() {
+            console.log("loadshow");
+           
+            this.containerMask.show();
+
+            this.state.loaded = false;
+
+            return this;
+        },
+
+        /**
+         * loading隐藏
+         * Display handle of the module queues loaded after.
+         * 
+         * @param   {Boolean}   recreate   是否为重建编辑器
+         * @returns {editormd}             返回editormd的实例对象
+         */
+
+
+        loadinghide : function() {
+            console.log("loadhide");
+           
+            this.containerMask.hide();
+
+            this.state.loaded = true;
+
+            return this;
+        },
+
         /**
          * 设置编辑器的宽度
          * Set editor width
@@ -2816,15 +2867,42 @@
             return this;
         },
 
+
           /**
-         * 打开文件
-         * Search & replace
+         * 打开文件选择框
+         * openfile
          * 
          * @param   {String}     command    CodeMirror serach commands, "find, fintNext, fintPrev, clearSearch, replace, replaceAll"
          * @returns {editormd}              return this
          */
+    openbox : function(type) {
 
+            console.log("openbox");
+            console.log(this);
+            console.log(this.toolbar);
+            var toolbarOpenFile  = this.toolbar.find("." + this.classPrefix + "menu > li > input"); 
+           
+            if(type=="open"){
+            toolbarOpenFile.attr('data-type','openfile');
+            }else if(type=="save"){
+ toolbarOpenFile.attr('data-type','openfile');
+  toolbarOpenFile.unbind("change");
+  var _this = this;
+  toolbarOpenFile.bind("change",function(event){
+                console.log("save change~");
+                console.log(_this);
+                console.log(toolbarOpenFile.attr('data-type'))
+                $.proxy(_this.toolbarHandlers['savefile'], _this)(_this.cm);
+            });
+            }
+             console.log(toolbarOpenFile);
+            toolbarOpenFile.trigger('click');
+
+            return this;
+           
+        },
         openfile : function() {
+
             console.log("openfile");
             var file = document.getElementById("fileInput").files[0];  
             var reader = new FileReader();  
@@ -2840,10 +2918,74 @@
             //result.innerHTML=this.result;  
             }  
             return this;
-           // $(#fileInput).triger('click');
-            //console.log($(#fileInput));
+           
         },
-                
+        savefile : function(filename){
+            var BlobBuilder = BlobBuilder || WebKitBlobBuilder || MozBlobBuilder;
+            var URL = URL || webkitURL || window; 
+
+            function saveAs(blob, filename) {
+    var type = blob.type;
+    var force_saveable_type = 'application/octet-stream';
+    if (type && type != force_saveable_type) { // 强制下载，而非在浏览器中打开
+        var slice = blob.slice || blob.webkitSlice || blob.mozSlice;
+        blob = slice.call(blob, 0, blob.size, force_saveable_type);
+    }
+
+    var url = URL.createObjectURL(blob);
+    var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+    save_link.href = url;
+    save_link.download = filename;
+
+    var event = document.createEvent('MouseEvents');
+    event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    save_link.dispatchEvent(event);
+    URL.revokeObjectURL(url);
+}
+            var bb = new BlobBuilder;
+            bb.append(this.cm.getValue());
+
+            saveAs(bb.getBlob('text/plain;charset=utf-8'), filename);
+        },
+          /**
+         * 翻译
+         * translation
+         * 
+         * @param   {String}     command    CodeMirror serach commands, "find, fintNext, fintPrev, clearSearch, replace, replaceAll"
+         * @returns {editormd}              return this
+         */
+        
+        translation : function(command) {
+
+            var settings = this.settings;
+            
+            if (!settings.translation)
+            {
+                alert("Error: settings.translation == false");
+                return this;
+            }
+            
+            if (!settings.readOnly)
+            {
+                const value = this.cm.getValue();
+                const linecount = this.cm.doc.lineCount();
+                console.log(linecount);
+                let selection = new Array();
+                const reold = new RegExp("\n" , "g");
+                //const renew = new RegExp("\$\@\!\@\$" , "g");
+                let tempvalue = value;
+
+                this.loadingshow();
+                var that = this;
+                this.cm.translate(1,function(cm){
+                    console.log("finish");
+                    console.log(this);
+                    that.loadinghide();
+                });
+            }
+            
+            return this;
+        },      
         /**
          * 搜索替换
          * Search & replace
@@ -3293,9 +3435,26 @@
         },
 
         open : function(){
+            console.log("open");
+            this.openbox('open'); 
+            console.log(this);           
+        },
+        save : function(){
+            console.log("save");
+            this.openbox('save'); 
+            console.log(this);           
+        },
+        openfile : function(){
             console.log("openfile");
-            console.log(this);
-            this.openfile();
+            this.openfile();           
+        },
+        savefile : function(){
+            console.log('savefile');
+            this.savefile();
+        },
+        translation : function(){
+            console.log("translation");
+            this.translation();
         },
         
         search : function() {
