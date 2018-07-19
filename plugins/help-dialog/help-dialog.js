@@ -102,6 +102,8 @@
 | Ctrl + I / Command + I                          | 插入斜体                          | Insert italic                                      |\n\
 | Ctrl + K / Command + K                          | 插入行内代码                      | Insert inline code                                 |\n\
 | Ctrl + L / Command + L                          | 插入链接                          | Insert link                                        |\n\
+| Ctrl + O / Command + O                          | 打开文件                          | Open file                                        |\n\
+| Ctrl + S / Command + S                          | 保存文件                          | Save file                                         |\n\
 | Ctrl + U / Command + U                          | 插入无序列表                      | Insert unordered list                              |\n\
 | Ctrl + Q                                        | 代码折叠切换                      | Switch code fold                                   |\n\
 | Ctrl + Z / Command + Z                          | 撤销                              | Undo                                               |\n\
@@ -132,6 +134,8 @@
 | Ctrl + Shift + Alt + I                          | 打开插入图片对话框层              | Open image dialog                                  |\n\
 | Ctrl + Shift + Alt + U                          | 将所选文本的第一个首字母转成大写  | Selection text first letter convert to uppercase   |\n\
 | Ctrl + Alt + G                                  | 跳转到指定的行                    | Goto line                                          |\n\
+| Ctrl + Alt + T                                  | 自动翻译                          | translate                                         |\n\
+| Ctrl + Alt + L                                  | 格式检查                          | check format                                       |\n\
 \n\
 ##### Emoji表情参考 (Emoji reference)\n\
 \n\

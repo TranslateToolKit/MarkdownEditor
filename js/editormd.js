@@ -76,16 +76,16 @@
             "help", "info"
         ],
         simple : [
-            "undo", "redo", "|", 
+            "open","save","undo", "redo", "|", 
             "bold", "del", "italic", "quote", "uppercase", "lowercase", "|", 
             "h1", "h2", "h3", "h4", "h5", "h6", "|", 
             "list-ul", "list-ol", "hr", "|",
-            "watch", "preview", "fullscreen", "|",
+            "watch", "preview", "fullscreen", "lint","translation","|",
             "help", "info"
         ],
         mini : [
-            "undo", "redo", "|",
-            "watch", "preview", "|",
+            "open","save","undo", "redo", "|",
+            "watch", "preview", "lint","translation","|",
             "help", "info"
         ]
     };
@@ -189,8 +189,8 @@
             }
         },
         toolbarCustomIcons   : {               // using html tag create toolbar icon, unused default <a> tag.
-            open             : "<a href=\"javascript:;\" title=\"open\" unselectable=\"on\"><label class=\"fa fa-folder-open\" name=\"open\" for=\"fileInput\" style=\"margin-left:3px;padding:5px;\"></label></a><input type=\"file\" id=\"fileInput\" accept=\"\.md\" style=\"display:none\">",
-            save             : "<a href=\"javascript:;\" title=\"save\" unselectable=\"on\"><i class=\"fa fa-save\" name=\"save\" style=\"margin-left:3px;padding:5px;\"></i></a><a id=\"saveas\" href=\"data:text/txt;charset=utf-8,测试下载\" download=\"test.md\" style=\"display:none\"></a>",
+            open             : "<a href=\"javascript:;\" title=\"open\" unselectable=\"on\"><i class=\"fa fa-folder-open\" name=\"open\" style=\"margin-left:3px;padding:5px;\"></i></a><input type=\"file\" id=\"fileInput\" accept=\"\.md\" style=\"display:none\">",
+            /*save             : "<a href=\"javascript:;\" title=\"save\" unselectable=\"on\"><i class=\"fa fa-save\" name=\"save\" style=\"margin-left:3px;padding:5px;\"></i></a><a id=\"saveas\" href=\"data:text/txt;charset=utf-8,测试下载\" download=\"test.md\" style=\"display:none\"></a>",*/
             lowercase        : "<a href=\"javascript:;\" title=\"Lowercase\" unselectable=\"on\"><i class=\"fa\" name=\"lowercase\" style=\"font-size:24px;margin-top: -10px;\">a</i></a>",
             "ucwords"        : "<a href=\"javascript:;\" title=\"ucwords\" unselectable=\"on\"><i class=\"fa\" name=\"ucwords\" style=\"font-size:20px;margin-top: -3px;\">Aa</i></a>"
         }, 
@@ -244,12 +244,12 @@
             description : "开源在线Markdown编辑器<br/>Open source online Markdown editor.",
             tocTitle    : "目录",
             toolbar     : {
-                open             : "打开MD文件",
-                save             : "选择保存文件",
+                open             : "打开文件（Ctrl+O）",
+                save             : "保存文件（Ctrl+S）",
                 undo             : "撤销（Ctrl+Z）",
                 redo             : "重做（Ctrl+Y）",
-                lint             : "格式检查(掘金计划版)",
-                translation      : "自动翻译",
+                lint             : "格式检查（Ctrl+ALT+R）",
+                translation      : "自动翻译（Ctrl+ALT+Y）",
                 bold             : "粗体",
                 del              : "删除线",
                 italic           : "斜体",
@@ -592,7 +592,7 @@
             if (settings.lint) 
                 {
                      editormd.loadScript(loadPath + "codemirror/addon/lint/markdown/markdown-it.min", function() {
-							editormd.loadScript(loadPath + "codemirror/addon/lint/markdown/markdownlint-browser", function() {
+							editormd.loadScript(loadPath + "codemirror/addon/lint/markdown/markdownlint-browser.min", function() {
 							
                         });
                         });
@@ -1260,6 +1260,7 @@
             
             toolbarMenu.find("[title=\"Lowercase\"]").attr("title", settings.lang.toolbar.lowercase);
             toolbarMenu.find("[title=\"ucwords\"]").attr("title", settings.lang.toolbar.ucwords);
+            toolbarMenu.find("[title=\"open\"]").attr("title", settings.lang.toolbar.open);
             
             this.setToolbarHandler();
             this.setToolbarAutoFixed();
@@ -2885,8 +2886,8 @@
             var toolbarOpenFile  = this.toolbar.find("." + this.classPrefix + "menu > li > input"); 
             if(type=="open"){
                 console.log("open file");
-            toolbarOpenFile.attr('data-type','openfile');
-            toolbarOpenFile.trigger('click');
+                toolbarOpenFile.attr('data-type','openfile');
+                toolbarOpenFile.trigger('click');
             }else if(type=="save"){
                 console.log("savefile");
                 this.savefile();
@@ -2921,7 +2922,7 @@
         },
         savefile : function(filename){
             console.log("savefile");
-            console.log(this);
+            
             var value = this.cm.getValue();
             console.log(value);
             var blob = new Blob([value]);
@@ -2930,10 +2931,13 @@
             console.log(new Date());
             a.download = this.filesOpen[0].replace('.','_' + new Date().getTime() + '.');
             a.textContent = "download";
+            a.style = "display:none";
 
             document.body.appendChild(a);
 
-            a.click();         
+            a.click();  
+
+            document.body.removeChild(a);
 
         },
           /**
@@ -3478,6 +3482,10 @@
         "Ctrl-6"       : "h6",
         "Ctrl-B"       : "bold",  // if this is string ==  editormd.toolbarHandlers.xxxx
         "Ctrl-D"       : "datetime",
+        "Ctrl-S"       : "save",
+        "Ctrl-O"       : "open",
+        "Ctrl-Alt-L"   : "lint",
+        "Ctrl-Alt-T"   : "translation",
         
         "Ctrl-E"       : function() { // emoji
             var cm        = this.cm;
