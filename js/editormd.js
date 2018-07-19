@@ -63,6 +63,7 @@
     editormd.homePage     = "https://pandao.github.io/editor.md/";
 	editormd.suggestionPage = "https://translatetoolkit.github.io/MarkdownEditor/";
     editormd.classPrefix  = "editormd-";
+    editormd.filesOpen = ['template.md'];
     
     editormd.toolbarModes = {
         full : [
@@ -188,7 +189,8 @@
             }
         },
         toolbarCustomIcons   : {               // using html tag create toolbar icon, unused default <a> tag.
-            open             : "<a href=\"javascript:;\" title=\"Lowercase\" unselectable=\"on\"><label class=\"fa fa-folder-open\" name=\"open\" for=\"fileInput\" style=\"margin-left:3px;padding:5px;\"></label></a><input type=\"file\" id=\"fileInput\" accept=\"\.md\" style=\"display:none\">",
+            open             : "<a href=\"javascript:;\" title=\"open\" unselectable=\"on\"><label class=\"fa fa-folder-open\" name=\"open\" for=\"fileInput\" style=\"margin-left:3px;padding:5px;\"></label></a><input type=\"file\" id=\"fileInput\" accept=\"\.md\" style=\"display:none\">",
+            save             : "<a href=\"javascript:;\" title=\"save\" unselectable=\"on\"><i class=\"fa fa-save\" name=\"save\" style=\"margin-left:3px;padding:5px;\"></i></a><a id=\"saveas\" href=\"data:text/txt;charset=utf-8,测试下载\" download=\"test.md\" style=\"display:none\"></a>",
             lowercase        : "<a href=\"javascript:;\" title=\"Lowercase\" unselectable=\"on\"><i class=\"fa\" name=\"lowercase\" style=\"font-size:24px;margin-top: -10px;\">a</i></a>",
             "ucwords"        : "<a href=\"javascript:;\" title=\"ucwords\" unselectable=\"on\"><i class=\"fa\" name=\"ucwords\" style=\"font-size:20px;margin-top: -3px;\">Aa</i></a>"
         }, 
@@ -382,6 +384,7 @@
             
             var _this            = this;
             var classPrefix      = this.classPrefix  = editormd.classPrefix; 
+            var filesOpen        = this.filesOpen = editormd.filesOpen;
             var settings         = this.settings     = $.extend(true, editormd.defaults, options);
             
             id                   = (typeof id === "object") ? settings.id : id;
@@ -1980,7 +1983,7 @@
          */
         
         height : function(height) {
-                
+            
             this.editor.css("height", (typeof height === "number")  ? height  + "px" : height);            
             this.resize();
             
@@ -1998,8 +2001,8 @@
         
         resize : function(width, height) {
             
-            width  = width  || null;
-            height = height || null;
+            width  = width  || this.settings.width || null;
+            height = height || this.settings.width || null;
             
             var state      = this.state;
             var editor     = this.editor;
@@ -2012,7 +2015,6 @@
             {
                 editor.css("width", (typeof width  === "number") ? width  + "px" : width);
             }
-            
             if (settings.autoHeight && !state.fullscreen && !state.preview)
             {
                 editor.css("height", "auto");
@@ -2029,16 +2031,16 @@
                 {
                     editor.height($(window).height());
                 }
-
-                if (settings.toolbar && !settings.readOnly) 
+               
+            }
+             if (settings.toolbar && !settings.readOnly) 
                 {
-                    codeMirror.css("margin-top", toolbar.height() + 1).height(editor.height() - toolbar.height());
+                    codeMirror.css("margin-top", toolbar.height() + 1)/*.height(editor.height() - toolbar.height())*/;
                 } 
                 else
                 {
-                    codeMirror.css("margin-top", 0).height(editor.height());
+                    codeMirror.css("margin-top", 0)/*.height(editor.height())*/;
                 }
-            }
             
             if(settings.watch) 
             {
@@ -2881,22 +2883,16 @@
             console.log(this);
             console.log(this.toolbar);
             var toolbarOpenFile  = this.toolbar.find("." + this.classPrefix + "menu > li > input"); 
-           
             if(type=="open"){
+                console.log("open file");
             toolbarOpenFile.attr('data-type','openfile');
+            toolbarOpenFile.trigger('click');
             }else if(type=="save"){
- toolbarOpenFile.attr('data-type','openfile');
-  toolbarOpenFile.unbind("change");
-  var _this = this;
-  toolbarOpenFile.bind("change",function(event){
-                console.log("save change~");
-                console.log(_this);
-                console.log(toolbarOpenFile.attr('data-type'))
-                $.proxy(_this.toolbarHandlers['savefile'], _this)(_this.cm);
-            });
+                console.log("savefile");
+                this.savefile();
             }
              console.log(toolbarOpenFile);
-            toolbarOpenFile.trigger('click');
+            //toolbarOpenFile.trigger('click');
 
             return this;
            
@@ -2904,7 +2900,10 @@
         openfile : function() {
 
             console.log("openfile");
+            console.log(this);
+            console.log(editormd);
             var file = document.getElementById("fileInput").files[0];  
+            this.filesOpen[0] = file.name; 
             var reader = new FileReader();  
             //将文件以文本形式读入页面  
             reader.readAsText(file); 
@@ -2921,31 +2920,21 @@
            
         },
         savefile : function(filename){
-            var BlobBuilder = BlobBuilder || WebKitBlobBuilder || MozBlobBuilder;
-            var URL = URL || webkitURL || window; 
+            console.log("savefile");
+            console.log(this);
+            var value = this.cm.getValue();
+            console.log(value);
+            var blob = new Blob([value]);
+            var a = document.createElement("a");
+            a.href = window.URL.createObjectURL(blob);
+            console.log(new Date());
+            a.download = this.filesOpen[0].replace('.','_' + new Date().getTime() + '.');
+            a.textContent = "download";
 
-            function saveAs(blob, filename) {
-    var type = blob.type;
-    var force_saveable_type = 'application/octet-stream';
-    if (type && type != force_saveable_type) { // 强制下载，而非在浏览器中打开
-        var slice = blob.slice || blob.webkitSlice || blob.mozSlice;
-        blob = slice.call(blob, 0, blob.size, force_saveable_type);
-    }
+            document.body.appendChild(a);
 
-    var url = URL.createObjectURL(blob);
-    var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
-    save_link.href = url;
-    save_link.download = filename;
+            a.click();         
 
-    var event = document.createEvent('MouseEvents');
-    event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    save_link.dispatchEvent(event);
-    URL.revokeObjectURL(url);
-}
-            var bb = new BlobBuilder;
-            bb.append(this.cm.getValue());
-
-            saveAs(bb.getBlob('text/plain;charset=utf-8'), filename);
         },
           /**
          * 翻译
@@ -3441,7 +3430,10 @@
         },
         save : function(){
             console.log("save");
-            this.openbox('save'); 
+            this.openbox('save');
+            //var t = $(#saveas);
+            /*console.log(t); 
+            t.click();*/
             console.log(this);           
         },
         openfile : function(){
