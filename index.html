@@ -14,13 +14,12 @@
             <div id="test-editormd">
                 <textarea style="display:none;">
 
-#### 把你要编辑的 md 内容复制到这里
+#### 把你要编辑的 md 内容复制到这里或者打开你要编辑的 .MD 文件
 
-- TeX (Based on KaTeX);
-- Emoji;
-- Task lists;
-- HTML tags decode;
-- Flowchart and Sequence Diagram;
+-“Ctrl+O”：打开文件
+-“Ctrl+S”：保存文件
+-“Ctrl+ALT+T”：翻译
+-“Ctrl+ALT+L”：格式检查
 
 #### Editor.md directory
 
@@ -42,8 +41,8 @@
 
             $(function() {
                 testEditor = editormd("test-editormd", {
-                    width   : "90%",
-                    height  : "90%",
+                    width   : "95%",
+                    height  : "95%",
                     syncScrolling : "single",
 					emoji : true,// Support Github emoji, Twitter Emoji(Twemoji), fontAwesome, Editor.md logo emojis.
 					taskList : true,

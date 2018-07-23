@@ -2958,24 +2958,42 @@
                 return this;
             }
             
-            if (!settings.readOnly)
-            {
-                const value = this.cm.getValue();
+            //if (!settings.readOnly)
+            //{
+                /*const value = this.cm.getValue();
                 const linecount = this.cm.doc.lineCount();
                 console.log(linecount);
                 let selection = new Array();
                 const reold = new RegExp("\n" , "g");
                 //const renew = new RegExp("\$\@\!\@\$" , "g");
                 let tempvalue = value;
-
+*/
                 this.loadingshow();
                 var that = this;
                 this.cm.translate(1,function(cm){
                     console.log("finish");
                     console.log(this);
                     that.loadinghide();
+                },function(error){
+                    switch(error.code){
+                        case "NETWORK_ERROR":
+                            alert("网络错误,请检查运行环境是否网络连接正常");
+                            break;
+                        case "API_SERVER_ERROR":
+                            alert("翻译接口返回错误数据");
+                            break;
+                        case "UNSUPPORTED_LANG":
+                            alert("语言不支持");
+                            break;
+                        case "NETWORK_TIMEOUT":
+                            alert("网络超时");
+                            break;
+                        default:
+                            break;
+                    }
+                    that.loadinghide();
                 });
-            }
+            //}
             
             return this;
         },      
