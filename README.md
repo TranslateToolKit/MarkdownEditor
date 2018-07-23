@@ -8,6 +8,7 @@ Markdown 文件编辑器，可以打开 MD 文件，编辑，方便增加修改�
 
 > **在线试用 Demo：**[Markdown 编辑器](https://translatetoolkit.github.io/MarkdownEditor/)
 
+                   使用 Chrome 以验证，为了使用翻译功能，请设置 [Chrome 开启跨域访问权限](https://github.com/zhongxia245/blog/issues/28)
 
 ![](https://github.com/TranslateToolKit/MarkdownEditor/blob/master/readme/screenshot.JPG)
 
@@ -27,19 +28,23 @@ Markdown 文件编辑器，可以打开 MD 文件，编辑，方便增加修改�
 ### NW.js 桌面程序制作步骤
 
 - **下载 [NW.js](https://nwjs.io/)**
+
        下载相应的 Windows 版本，解压
        将 MarkdownEditor 文件夹内所有内容打包成压缩文件
        MarkdownEditor.zip,复制到 NW.js 的安装目录中
 
 - **打包命令**
+
        通过命令 `copy /b nw.exe+MarkdownEditor.zip MarkdownEditor.exe` 生成 MarkdownEditor.exe
 
 - **生成 exe**
+
        将依赖的 dll 文件和 Test.exe 打包成一个文件:
        - 制作单一可执行程序可以使用 [Enigma Virtual Box]
        - 制作一个安装程序可以使用 [inno]
 
 - **icon 修改**
+
       可以使用 [Resource Hacker](http://www.angusj.com/resourcehacker/ ) 
 
 - **压缩工具**
