@@ -6,9 +6,8 @@ Markdown 文件编辑器，可以打开 MD 文件，编辑，方便增加修改�
 
 > **windows 桌面版本：**
 
-> **在线试用 Demo：**[Markdown 编辑器](https://translatetoolkit.github.io/MarkdownEditor/)
-
-                   使用 Chrome 以验证，为了使用翻译功能，请设置 [Chrome 开启跨域访问权限](https://github.com/zhongxia245/blog/issues/28)
+> **在线试用 Demo：**[Markdown 编辑器](https://translatetoolkit.github.io/MarkdownEditor/),
+使用 Chrome 打开，为了使用翻译功能，请设置 [Chrome 开启跨域访问权限](https://github.com/zhongxia245/blog/issues/28)
 
 ![](https://github.com/TranslateToolKit/MarkdownEditor/blob/master/readme/screenshot.JPG)
 
