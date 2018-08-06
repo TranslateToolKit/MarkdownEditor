@@ -4443,7 +4443,7 @@ hr.editormd-page-break {
   background: #333;
 }
 .editormd-theme-dark .editormd-menu > li.divider {
-  border-right: 1px solid #111;
+  border-right: 1px solid #bbb;
 }
 .editormd-theme-dark .CodeMirror {
   border-right: 1px solid rgba(0, 0, 0, 0.1);
