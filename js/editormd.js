@@ -2036,12 +2036,13 @@
             }
              if (settings.toolbar && !settings.readOnly) 
                 {
-                    codeMirror.css("margin-top", toolbar.height() + 1)/*.height(editor.height() - toolbar.height())*/;
+                    codeMirror.css("margin-top", toolbar.height() + 1).height(editor.height() - toolbar.height());
                 } 
                 else
                 {
-                    codeMirror.css("margin-top", 0)/*.height(editor.height())*/;
+                    codeMirror.css("margin-top", 0).height(editor.height());
                 }
+            
             
             if(settings.watch) 
             {
