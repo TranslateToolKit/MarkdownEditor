@@ -1316,13 +1316,13 @@
             var toolbarIcons        = this.toolbarIcons = toolbar.find("." + classPrefix + "menu > li > a");  
             var toolbarIconHandlers = this.getToolbarHandles();  
             var toolbarOpenFile     = toolbar.find("." + classPrefix + "menu > li > input");    
-            console.log(toolbarIcons);
-            console.log(toolbarOpenFile);
+            //console.log(toolbarIcons);
+            //console.log(toolbarOpenFile);
 
             toolbarOpenFile.bind("change",function(event){
-                console.log("openfile change~");
-                console.log(_this);
-                console.log(toolbarOpenFile.attr('data-type'))
+                //console.log("openfile change~");
+                //console.log(_this);
+                //console.log(toolbarOpenFile.attr('data-type'))
                 $.proxy(toolbarIconHandlers['openfile'], _this)(cm);
             });
 
@@ -1333,10 +1333,10 @@
                 var cursor              = cm.getCursor();
                 var selection           = cm.getSelection();
 
-                console.log(icon);
-                console.log(name);
-                console.log(cursor);
-                console.log(selection);
+                //console.log(icon);
+                //console.log(name);
+                //console.log(cursor);
+                //console.log(selection);
 
                 if (name === "") {
                     return ;
@@ -1855,8 +1855,8 @@
 
             cm.on("change", function(_cm, changeObj) {
                 
-                console.log("test");
-                console.log(settings.lint);
+                //console.log("test");
+                //console.log(settings.lint);
                 if (settings.lint){
                     _this.lint();
                 }
@@ -1884,7 +1884,7 @@
          */
         
         loadedDisplay : function(recreate) {
-            console.log("loadedDisplay");
+            //console.log("loadedDisplay");
             recreate             = recreate || false;
             
             var _this            = this;
@@ -1931,7 +1931,7 @@
 
 
         loadingshow : function() {
-            console.log("loadshow");
+            //console.log("loadshow");
            
             this.containerMask.show();
 
@@ -1950,7 +1950,7 @@
 
 
         loadinghide : function() {
-            console.log("loadhide");
+            //console.log("loadhide");
            
             this.containerMask.hide();
 
@@ -2729,7 +2729,7 @@
          * @returns {editormd}         返回editormd的实例对象
          */
          lint : function(){
-            console.log(this.cm);
+            //console.log(this.cm);
             var cm = this.cm;
             cm.performLint();
          },
@@ -2881,9 +2881,9 @@
          */
     openbox : function(type) {
 
-            console.log("openbox");
-            console.log(this);
-            console.log(this.toolbar);
+            //console.log("openbox");
+            //console.log(this);
+            //console.log(this.toolbar);
             var toolbarOpenFile  = this.toolbar.find("." + this.classPrefix + "menu > li > input"); 
             if(type=="open"){
                 console.log("open file");
@@ -2893,7 +2893,7 @@
                 console.log("savefile");
                 this.savefile();
             }
-             console.log(toolbarOpenFile);
+             //console.log(toolbarOpenFile);
             //toolbarOpenFile.trigger('click');
 
             return this;
@@ -2901,9 +2901,9 @@
         },
         openfile : function() {
 
-            console.log("openfile");
-            console.log(this);
-            console.log(editormd);
+            //le.log("openfile");
+            //console.log(this);
+            //console.log(editormd);
             var file = document.getElementById("fileInput").files[0];  
             this.filesOpen[0] = file.name; 
             var reader = new FileReader();  
@@ -2913,8 +2913,8 @@
             reader.onload=function(f){  
             //var result=document.getElementById("result");  
             //显示文件  
-            console.log(this.result);
-            console.log(that);
+            //console.log(this.result);
+            //console.log(that);
             that.cm.doc.setValue(this.result);
             //result.innerHTML=this.result;  
             }  
@@ -2922,14 +2922,14 @@
            
         },
         savefile : function(filename){
-            console.log("savefile");
+            //console.log("savefile");
             
             var value = this.cm.getValue();
-            console.log(value);
+            //console.log(value);
             var blob = new Blob([value]);
             var a = document.createElement("a");
             a.href = window.URL.createObjectURL(blob);
-            console.log(new Date());
+            //console.log(new Date());
             a.download = this.filesOpen[0].replace('.','_' + new Date().getTime() + '.');
             a.textContent = "download";
             a.style = "display:none";
@@ -2972,8 +2972,8 @@
                 this.loadingshow();
                 var that = this;
                 this.cm.translate(1,function(cm){
-                    console.log("finish");
-                    console.log(this);
+                    //console.log("finish");
+                    //console.log(this);
                     that.loadinghide();
                 },function(error){
                     switch(error.code){
@@ -3080,12 +3080,12 @@
 
     editormd.toolbarHandlers = {
         lint : function(){
-            console.log("lint");
+            //console.log("lint");
             this.cm.performLint();
         },
 
         undo : function() {
-            console.log("undo");
+            //console.log("undo");
             this.cm.undo();
         },
         
@@ -3438,7 +3438,7 @@
         },
 
         fullscreen : function() {
-            console.log("fullscreen");
+            //console.log("fullscreen");
             this.fullscreen();
         },
 
@@ -3447,39 +3447,39 @@
         },
 
         open : function(){
-            console.log("open");
+            //console.log("open");
             this.openbox('open'); 
-            console.log(this);           
+            //console.log(this);           
         },
         save : function(){
-            console.log("save");
+            //console.log("save");
             this.openbox('save');
             //var t = $(#saveas);
             /*console.log(t); 
             t.click();*/
-            console.log(this);           
+            //console.log(this);           
         },
         openfile : function(){
-            console.log("openfile");
+            //console.log("openfile");
             this.openfile();           
         },
         savefile : function(){
-            console.log('savefile');
+            //console.log('savefile');
             this.savefile();
         },
         translation : function(){
-            console.log("translation");
+            //console.log("translation");
             this.translation();
         },
         
         search : function() {
-            console.log("search");
+            //console.log("search");
             this.search();
         },
 
         replace : function() {
-            console.log("replace");
-            console.log(this);
+            //console.log("replace");
+            //console.log(this);
             this.searchReplace();
         },
 
